@@ -15,11 +15,11 @@ from .serializers import ProductsSerializer, InventorySerializer
 
 #METODOS DE SOPORTE QUE SE PUEDEN USAR EN DIFERENTES ARCHIVOS DE PY
 
-def product_exists(store_name,product_id):
+def product_exists(product_id,**kwargs):
     '''metodo para definir si el producto existe
 
     Args:
-        store_id (int): id de la tienda
+        **kwargs (): puede ser id de la empresa, o nombre de la empresa
         product_id (int): id del producto
 
     Returns:
@@ -27,9 +27,8 @@ def product_exists(store_name,product_id):
         serializer: para devolver la info del producto
     '''
     try: 
-        user=User.objects.get(store_name=store_name)
-        store_products= Product.objects.filter(user=user)
-        product= store_products.get(_id=product_id)
+        user=User.objects.get(**kwargs)
+        product= Product.objects.filter(user=user).get(_id=product_id)
         if product:
             serializer=ProductsSerializer(product,many=False)
             return True,serializer
@@ -49,7 +48,7 @@ def product_availability(store_id,product_id):
         Bool: True si hay mas de 0 del producto
         int: Retorna la cantidad que hay del producto
     '''
-    exists,serializer=product_exists(store_id,product_id)
+    exists,serializer=product_exists(product_id,id=store_id)
     if exists:
         inventory_products= Inventory.objects.filter(user=store_id)
         product=inventory_products.get(product=product_id)
@@ -62,3 +61,6 @@ def product_availability(store_id,product_id):
     else:
         #el producto no existe
         return False
+
+def product_owner(user,product_id)->bool:
+    pass

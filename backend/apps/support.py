@@ -9,7 +9,7 @@ def is_client(user):
     '''define si el usuario es cliente'''
     return user.Role=='CLIENT'
 
-def get_user(user:str):
+def get_user(email:str):
     '''Metodo de soporte para poder obtener el User
 
     Args:
@@ -19,6 +19,10 @@ def get_user(user:str):
         Response: User que se encuentra
     '''
     #user=request.user
-    user=User.objects.get(email=user)
+    user=User.objects.get(email=email)
     print(user)
     return user
+
+'''def get_user(**kwargs):
+    user=User.objects.get(**kwargs)
+    return user'''

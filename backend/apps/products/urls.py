@@ -6,8 +6,8 @@ from . import views, inventory
 urlpatterns = [
     #ALL
         #path('nombre de la empresa/get_product/<str:pk>',views.get_product,name='get_product'),
-    path('<str:store_name>/products/',views.get_store_products,name='get_store_products'),#obtener los productos de id empresa
-    path('<str:store_name>/product/<str:product_id>/',views.detail_product,name='get_product'),#obtener un producto en especifico
+    path('<int:store_id>/products/',views.get_store_products,name='get_store_products'),#obtener los productos de id empresa
+    path('<int:store_id>/product/<int:product_id>/',views.detail_product,name='get_product'),#obtener un producto en especifico
     path('get_products/',views.get_all_products ,name='get_products'), #obtener todos los productos creados
     
     #Client
