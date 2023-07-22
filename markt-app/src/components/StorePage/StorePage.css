@@ -1,0 +1,191 @@
+.sp-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Open Sans', sans-serif;
+  position: relative;
+  overflow-x: hidden; /* Añadido para corregir el desbordamiento en móviles */
+}
+
+.company-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 50px;
+  opacity: 0.6;
+  transform: scale(4);
+  margin-top: 20px;
+}
+
+.sp-header {
+  text-align: center;
+  padding: 30px;
+  margin-bottom: 20px;
+}
+
+.sp-logo-rectangular {
+  width: 300px;
+  object-fit: cover;
+  border: 4px solid #333;
+  margin: 20px auto;
+}
+
+.sp-title {
+  margin: 20px 0;
+  font-size: 2.5em;
+  color: #333;
+  font-weight: bold;
+}
+
+.sp-socials {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.sp-social-link {
+  color: #333;
+  font-size: 1.8em;
+  transition: color 0.3s ease;
+}
+
+.sp-social-link:hover {
+  color: #888;
+}
+
+.sp-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  margin: 40px 0;
+}
+
+.sp-about-section, .sp-founder-section {
+  width: 100%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.sp-card-title {
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.sp-about-description {
+  height: 4em;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+.sp-about-description.expanded {
+  height: auto;
+}
+
+.sp-show-more-button {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.sp-founder-description {
+  height: 4em;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+.sp-founder-description.expanded {
+  height: auto;
+}
+
+.sp-founder-section {
+  display: flex;
+  align-items: center;
+}
+
+.sp-founder-img {
+  width: 150px;
+  border-radius: 10px;
+  margin-right: 20px;
+}
+
+.sp-products {
+  width: 100%;
+  text-align: center;
+}
+
+.sp-products h2 {
+  font-size: 1.6em;
+  margin-bottom: 20px;
+}
+
+.sp-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.sp-product-image {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.sp-product-button {
+  display: inline-block;
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin: 10px 0;
+  transition: background-color 0.3s ease;
+}
+
+.sp-product-button:hover {
+  background-color: #444;
+}
+
+.sp-product-price {
+  color: #333;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.sp-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sp-card-content {
+  text-align: left;
+}
+
+/* Mostrar el botón de "Ver más" solo en pantallas pequeñas */
+.mobile-only {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .sp-founder-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sp-founder-img {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+}

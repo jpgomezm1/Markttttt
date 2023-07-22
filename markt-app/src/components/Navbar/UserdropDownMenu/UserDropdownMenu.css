@@ -1,0 +1,31 @@
+/* Estilos generales para el menú desplegable */
+.user-dropdown-menu {
+    margin-top: 45px;
+    border: 1px solid #dddddd;
+    background-color: #ffffff;
+  }
+  
+  /* Estilos para cada elemento de la lista del menú desplegable */
+  .user-dropdown-menu-item {
+    padding: 10px 20px;
+    color: #333333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Estilo al pasar el mouse por encima de un elemento del menú */
+  .user-dropdown-menu-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Estilo para los íconos del menú desplegable */
+  .user-dropdown-menu-item-icon {
+    margin-right: 10px;
+  }
+  
+  /* Estilo para el texto de los elementos del menú */
+  .user-dropdown-menu-item-text {
+    font-size: 16px;
+  }
+  

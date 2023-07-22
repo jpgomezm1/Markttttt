@@ -1,0 +1,73 @@
+.liked-stores-page {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #144579;
+    margin: auto;
+  }
+  
+  .liked-stores-page h1 {
+    font-size: 1.5em;
+    color: #144579;
+    font-family: 'Montserrat', sans-serif;
+    width: 100%;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .store-card {
+    margin: 10px;
+    flex-basis: 100%;
+  }
+  
+  @media(min-width: 768px) {
+    .liked-stores-page h1 {
+      font-size: 2em;
+    }
+    .store-card {
+      flex-basis: calc(50% - 20px);
+    }
+  }
+  
+  @media(min-width: 1200px) {
+    .liked-stores-page h1 {
+      font-size: 3em;
+    }
+    .store-card {
+      flex-basis: calc(25% - 20px);
+    }
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .markt-logo {
+    max-width: 400px;
+    margin: 20px auto 0 auto;
+  }
+  
+  .empty-message {
+    font-size: 1.2em;
+    color: #666;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    padding: 20px;
+    margin: auto;
+    max-width: 600px;
+  }
+  
+  @media(min-width: 768px) {
+    .empty-message {
+      font-size: 1.5em;
+    }
+  }
+  
+
+
+
+

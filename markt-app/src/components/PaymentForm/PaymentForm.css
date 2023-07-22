@@ -1,0 +1,81 @@
+.payment-form-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    max-width: 500px;
+    margin: 40px auto;
+}
+
+.payment-form-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #2C3E50;
+    text-align: center;
+}
+
+.payment-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.payment-form .MuiTextField-root,
+.payment-form .MuiFormControl-root {
+    margin-bottom: 25px;
+}
+
+.delivery-option-select,
+.payment-method-select {
+    margin-bottom: 10px;
+}
+
+/* Nuevo estilo para el mensaje de recogida en tienda */
+
+
+/* Estilos para la sección de resumen */
+.summary-container-pf {
+    background-color: #f4f7f9;
+    border-radius: 4px;
+    margin-bottom: 25px;
+    padding: 20px;
+}
+
+.summary-item-pf {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #7f8c8d;
+    border-bottom: 1px solid #e0e0e0; /* Añadido separador entre elementos */
+    padding-bottom: 10px;
+}
+
+.summary-total-pf {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 15px;
+    color: #27ae60;
+    border: none; /* Asegurarse de que no se muestre el separador en el total */
+}
+
+@media screen and (max-width: 768px) {
+    .payment-form-container {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    .payment-form-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+}
+
+
+.shopping-cart-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: bold;
+    color: #333;
+    font-size: 2rem;
+  }
+
+
+

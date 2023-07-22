@@ -1,0 +1,16 @@
+[
+    {
+      "id": 1,
+      "name": "Tienda 1",
+      "description": "Esta es la descripción de la Tienda 1.",
+      "category": "ropa"
+    },
+    {
+      "id": 2,
+      "name": "Tienda 2",
+      "description": "Esta es la descripción de la Tienda 2.",
+      "category": "comida"
+    }
+    
+  ]
+  

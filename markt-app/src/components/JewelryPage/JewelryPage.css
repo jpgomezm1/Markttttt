@@ -1,0 +1,42 @@
+.jewelry-page {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+  background-color: #ffffff;
+  color: #144579;
+  margin: auto;
+}
+
+.jewelry-page h1 {
+  font-size: 1.5em;
+  color: #144579;
+  font-family: 'Montserrat', sans-serif;
+  width: 100%;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.store-card {
+  margin: 10px;
+  flex-basis: 100%;
+}
+
+@media (min-width: 768px) {
+  .jewelry-page h1 {
+    font-size: 2em;
+  }
+  .store-card {
+    flex-basis: calc(50% - 20px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .jewelry-page h1 {
+    font-size: 3em;
+  }
+  .store-card {
+    flex-basis: calc(25% - 20px);
+  }
+}
