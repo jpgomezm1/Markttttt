@@ -15,13 +15,15 @@ from .serializers import ProductsSerializer, InventorySerializer
 
 from .support import *
 
+import json
+
 #Inventory
 #@login_required
 #@user_passes_test(is_seller)
 @api_view(['GET'])
 def get_inventory(request):
-    #user=request.user
-    user=2
+    user=get_user("VendedorEjemplo1@gmail.com") #ELIMINAR CUANDO YA NO USE POSTMAN
+    #user=get_user(request.user)
     inventory_products=Inventory.objects.filter(user=user)
     print(inventory_products)
     serializers=InventorySerializer(inventory_products,many=True)
@@ -31,22 +33,28 @@ def get_inventory(request):
 #Inventory
 #@login_required
 #@user_passes_test(is_seller)
-@api_view(['GET','PUT'])
+@api_view(['PUT'])
 def update_inventory_product(request,product_id):
-    store_name='Tienda1'#ELIMINAR CUANDO YA NO USE POSTMAN
-    exists,serializer=product_exists(store_name,product_id)
+    user=get_user("VendedorEjemplo1@gmail.com") #ELIMINAR CUANDO YA NO USE POSTMAN
+    #user=get_user(request.user)
+    exists,serializer=product_exists(product_id,email=user)
     if exists:
-        print('existeeeee')
+        product=Product.objects.get(_id=product_id)
         inventory=Inventory.objects.get(product=product_id)
-        if request.method=='PUT':
-            form=InventoryUpdateForm(request.data,instance=inventory)
-            if form.is_valid():
-                form.save()
-                return Response({'message': 'Stock actualizado exitosamente'})
-            else:
-                return Response({'ERROR': 'No se pudo actualizar el Stock'})
+        if product.sizes=='Si':
+            form =InventoryUpdateSizeStockForm(request.data,instance=inventory)
+            sum=0
+            data=json.loads(request.data['size_stock'])
+            for key in data:
+                value=data.get(key)
+                sum+=int(value)
+            inventory.stock=sum
         else:
-            form=AddProductForm(instance=inventory)
-            return Response({'Mensaje': 'si es get devuelvo el formulario'})
+            form=InventoryUpdateStockForm(request.data,instance=inventory)
+        if form.is_valid():
+            form.save()
+            return Response({'message': 'Stock actualizado exitosamente'})
+        else:
+            return Response({'ERROR': form.errors})
     else:
         return Response({'ERROR': 'Producto no encontrado'})

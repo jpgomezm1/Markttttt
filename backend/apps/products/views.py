@@ -154,7 +154,11 @@ def create_product(request):
         product=form.save(commit=False)
         product.user=user #ELIMINAR CUANDO YA NO USE POSTMAN
         product.save()
-        Inventory.objects.create( user=user, product=product,stock=0)
+        if request.data["sizes"][0]=='S':
+            Inventory.objects.create( user=user, product=product,size_stock={"xs":0,"s":0,"m":0,"l":0,"xl":0}
+            )
+        else:
+            Inventory.objects.create( user=user, product=product,stock=0)
         return Response({'message': 'Producto creado exitosamente'})
     else:
         return Response({'ERROR':form.errors})
