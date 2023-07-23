@@ -1,4 +1,6 @@
 markt-MVP-venv/
+apps/mail/__pycache__/
+apps/mail/migrations/__pycache__/
 apps/orders/__pycache__/
 apps/orders/migrations/__pycache__/
 apps/payment/__pycache__/

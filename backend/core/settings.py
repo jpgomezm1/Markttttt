@@ -37,6 +37,7 @@ PROJECT_APPS=[
     'apps.payment',
     'apps.shopping_cart',
     'apps.orders',
+    'apps.mail',
     ]
 ECOMMERCE_APPS=[]
 THIRD_PARTY_APPS=[
@@ -81,7 +82,7 @@ print(os.path)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, '../frontend/build')],
+        'DIRS': [os.path.join(BASE_DIR, '../markt-app/build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -173,7 +174,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, '../frontend/build/static')
+    os.path.join(BASE_DIR, '../markt-app/build/static')
 ]
 
 #SI SE QUIERE PROBAR POSTMAN SE DEBE COMENTAR
