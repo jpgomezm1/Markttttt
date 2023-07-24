@@ -5,22 +5,14 @@ from rest_framework.response import Response
 
 from apps.products.models import Product
 
-from .serializers import ProductsSerializer
+from .serializers import StoresSerializer
+from apps.user.models import Seller
 
 @api_view(['GET'])
-def get_products(request):
-    products= Product.objects.all()
-    serializers=ProductsSerializer(products,many=True)
-    return Response(serializers.data)
-
-@api_view(['GET'])
-def get_product(request,pk):
-    try:
-        products= Product.objects.get(_id=pk)
-        serializer=ProductsSerializer(products,many=False)
-        return Response(serializer.data)
-    except:
-        return Response({"mensaje":"no se encontró el producto buscado"})
+def get_stores(request):
+    stores=Seller.objects.filter(role="SELLER")
+    serializer=StoresSerializer(stores,many=True)
+    return Response(serializer.data)
     
 
 #VISTAS PARA CLIENTE

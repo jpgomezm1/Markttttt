@@ -13,6 +13,7 @@ urlpatterns = [
     path('lists/',include('apps.lists.urls')),
     path('orders/',include('apps.orders.urls')),
     path('mail/',include('apps.mail.urls')),
+    path('stores/',include('apps.stores.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += [re_path(r'^.*',

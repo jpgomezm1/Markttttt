@@ -3,6 +3,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from datetime import datetime
 
 from apps.user.models import User
 from apps.support import *
@@ -21,13 +22,8 @@ def add_order_items(request):
     user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     #user=get_user(request.user)
     data=request.data
-    '''filter_data={}
-    for field, data_list in data.items():
-            filter_data[field] = data_list[0]
-    print(filter_data)'''
     
     #Crear Order
-    #order_items=filter_data #NO ES IGUAL AL VIDEO
     order_items=data['order_items'] #IGUAL AL VIDEO
     if order_items and len(order_items)== 0:
         return Response({'detalle':'No Order Items'})
@@ -41,8 +37,7 @@ def add_order_items(request):
         )
         print('CREA LA ORDER')
     # Crear Shipping Address
-        print(f'{data["shippingAddress"]} ASDFLKJASDFÑLKASJDFSADFK')
-        address=Addresses.objects.get(id=data['shippingAddress'])
+        address=Addresses.objects.get(id=int(data['shippingAddress']))
         shipping_address=ShippingAddress.objects.create(
             order=order,
             address=address,
@@ -64,5 +59,24 @@ def add_order_items(request):
             product_inventory.stock-=item.quantity
             product_inventory.save()
     serializer=OrderSerializer(order,many=False)
-    print(serializer)
     return Response(serializer.data)
+
+#@login_required
+@api_view(['GET'])
+def get_order(request,order_id):
+
+    user=get_user(email="ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    #user=get_user(request.user)
+    order=Order.objects.filter(user=user).get(_id=order_id)
+    serializer=OrderSerializer(order,many=False)
+    return Response(serializer.data)
+
+#@login_required
+@api_view(['PUT'])
+def paid_order(request,order_id):
+    order=Order.objects.get(_id=order_id)
+    order.is_paid=True
+    order.paid_at=datetime.now()
+    order.save()
+
+    return Response('la orden fue pagada')

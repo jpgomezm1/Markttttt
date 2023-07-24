@@ -3,7 +3,7 @@ from . import views
 
 
 urlpatterns = [
-    path('<int:id>/products/',include('apps.products.urls')),
+    path('',views.get_stores,name='get_stores'),
     
 ]
 
