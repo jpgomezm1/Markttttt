@@ -23,12 +23,12 @@ services:
   # Database (PostgreSQL)
   db:
    image: postgres
-   container_name: django_auth_api_postgresql
+   container_name: markt-MVP_postgresql
    restart: always
    environment:
-      POSTGRES_DB: solopython_auth_db
-      POSTGRES_USER: solopython
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: markt-MVP
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres1234
    ports:
     - 5432:5432
    volumes:
@@ -37,6 +37,6 @@ services:
   # Redis Cache
   redis:
     image: redis
-    container_name: django_auth_api_redis
+    container_name: markt-MVP_redis
     ports:
       - 6379:6379
