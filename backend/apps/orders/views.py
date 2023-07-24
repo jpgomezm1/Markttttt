@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from apps.user.models import User
 from apps.support import *
 from apps.orders.serializers import *
+from apps.lists.models import Addresses
 from .models import *
 
 from apps.products.models import Product,Inventory
@@ -40,12 +41,11 @@ def add_order_items(request):
         )
         print('CREA LA ORDER')
     # Crear Shipping Address
+        print(f'{data["shippingAddress"]} ASDFLKJASDFÑLKASJDFSADFK')
+        address=Addresses.objects.get(id=data['shippingAddress'])
         shipping_address=ShippingAddress.objects.create(
             order=order,
-            address=data['shippingAddress']['address'],
-            city=data['shippingAddress']['city'],
-            postal_code=data['shippingAddress']['postalCode'],
-            country=data['shippingAddress']['country'],
+            address=address,
             )
         
         for i in order_items:
@@ -63,7 +63,6 @@ def add_order_items(request):
             product_inventory=Inventory.objects.get(product=product)
             product_inventory.stock-=item.quantity
             product_inventory.save()
-    print('LLEGAAA')
     serializer=OrderSerializer(order,many=False)
     print(serializer)
     return Response(serializer.data)

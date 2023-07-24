@@ -48,6 +48,7 @@ class Addresses(models.Model):
     city=models.CharField(max_length=200, null=False, blank=True)
     region=models.CharField(max_length=200, null=False, blank=True)
     postal_code=models.CharField(max_length=200, null=False, blank=True)
+    default=models.BooleanField(null=True, blank=True,default=False)
 
     def __str__(self):
         return str(self.name)
