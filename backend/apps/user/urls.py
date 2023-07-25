@@ -13,3 +13,5 @@ urlpatterns = [
     path('delete/',views.delete_account,name='delete'),
     path('update/',views.update_account_info,name='update'),
 ]
+
+

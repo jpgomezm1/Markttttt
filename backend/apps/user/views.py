@@ -10,7 +10,7 @@ from .models import *
 from apps.support import *
 from .forms import *
 from .serializers import *
-from apps.mail.models import MailSubscribers
+
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.core.mail import send_mail
@@ -30,15 +30,14 @@ def register_account(request):
     '''
     form = RegistrationForm(request.POST)
     if form.is_valid():
-        email=request.POST["email"]
-        MailSubscribers.objects.create(email=email)
-        '''send_mail(
+        send_mail(
             'Greacias por crear tu cuenta en Markt',
             'creaste una cuenta',
             settings.EMAIL_HOST_USER,
-            [email]
-        )'''
+            ['juanjochan321@gmail.com']
+        )
         form.save()
+        print('correo enviado')
         return Response({'message': 'Cuenta creada exitosamente'})
     else:
         errors = form.errors
@@ -128,7 +127,7 @@ def delete_account(request):
     except ObjectDoesNotExist:
         return Response({'message': 'La cuenta a eliminar no existe'})
 
-@api_view(['POST'])
+@api_view(['GET','POST'])
 def login_user_client(request):
     '''Metodo para hacer el Login
 
@@ -138,15 +137,17 @@ def login_user_client(request):
     Returns:
         Json : Mensaje de confirmacion o error
     '''
-    email=request.data['email']
-    password=request.data['password']
-    user=authenticate(request,username=email,password=password)
-    if user is not None:
-        login(request,user)
-        return Response({"message":"SI existe la cuenta"+str(request.data)})
+    if request.method=='POST':
+        email=request.email['email']
+        password=request.password['password']
+        user=authenticate(request,username=email,password=password)
+        if user is not None:
+            login(request,user)
+            return Response({"message":"SI existe la cuenta"+request.data})
+        else:
+            return Response({"message":"no existe la cuenta"+request.data})
     else:
-        return Response({"message":"no existe la cuenta"+str(request.data)})
-
+        return Response({"message":"retorna la pagina de login"})
 
 #Client
 
@@ -168,3 +169,4 @@ def get_social_media_data(*args,data):
         print(f'hay datos en {key}: {data}')
         social_media[key]=data.get(key)
     return social_media
+
