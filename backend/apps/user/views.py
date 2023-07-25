@@ -10,6 +10,9 @@ from .models import *
 from apps.support import *
 from .forms import *
 from .serializers import *
+from apps.mail.models import MailSubscribers
+
+
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -20,30 +23,22 @@ from django.conf import settings
 #CRUD Account
 @api_view(['POST'])
 def register_account(request):
-    '''Metodo para registrar un usuario nuevo por medio del formulario en forms
-
-    Args:
-        request (): django
-
-    Returns:
-        Json : Mensaje de confirmacion o error
-    '''
-    form = RegistrationForm(request.POST)
+    form = RegistrationForm(request.data)  # aquí está el cambio
+    print(form)
     if form.is_valid():
-        send_mail(
-            'Greacias por crear tu cuenta en Markt',
-            'creaste una cuenta',
-            settings.EMAIL_HOST_USER,
-            ['juanjochan321@gmail.com']
-        )
-        form.save()
-        print('correo enviado')
+        email=request.data["email"]  # y aquí
+        MailSubscribers.objects.create(email=email)
+        user = form.save(commit=False)
+        print("Usuario antes de guardar: ", user.__dict__)
+        user.save()
+        print("Usuario después de guardar: ", user.__dict__)
         return Response({'message': 'Cuenta creada exitosamente'})
     else:
         errors = form.errors
         error_message = {}
         for field, error_list in errors.items():
             error_message[field] = error_list[0]
+        print(f"Formulario no válido: {error_message}")
         return Response({'ERROR Message': error_message})
 
 #@login_required #si se quiere probar con postman se debe comentar
@@ -127,7 +122,7 @@ def delete_account(request):
     except ObjectDoesNotExist:
         return Response({'message': 'La cuenta a eliminar no existe'})
 
-@api_view(['GET','POST'])
+@api_view(['POST'])
 def login_user_client(request):
     '''Metodo para hacer el Login
 
@@ -138,14 +133,14 @@ def login_user_client(request):
         Json : Mensaje de confirmacion o error
     '''
     if request.method=='POST':
-        email=request.email['email']
-        password=request.password['password']
+        email=request.data['email']
+        password=request.data['password']
         user=authenticate(request,username=email,password=password)
         if user is not None:
             login(request,user)
-            return Response({"message":"SI existe la cuenta"+request.data})
+            return Response({"message":"SI existe la cuenta"})
         else:
-            return Response({"message":"no existe la cuenta"+request.data})
+            return Response({"message":"no existe la cuenta"})
     else:
         return Response({"message":"retorna la pagina de login"})
 

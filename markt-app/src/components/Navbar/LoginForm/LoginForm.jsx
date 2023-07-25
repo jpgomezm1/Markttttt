@@ -23,7 +23,7 @@ const LoginForm = ({ handleClose, handleGuest }) => {
       return;
     }
     
-    dispatch(login());
+    dispatch(login({email, password}));
     handleClose();
   };
 

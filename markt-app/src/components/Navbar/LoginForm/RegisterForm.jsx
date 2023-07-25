@@ -20,8 +20,7 @@ const RegisterForm = ({ handleClose, setFormType }) => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    
-    // Verificación de que todos los campos están llenos
+  
     if (
       firstName === "" ||
       lastName === "" ||
@@ -35,12 +34,25 @@ const RegisterForm = ({ handleClose, setFormType }) => {
       alert("Todos los campos deben estar llenos y debes aceptar los Términos y Condiciones y la Política de Tratamiento de Datos para completar el registro.");
       return;
     }
-
+  
+    if (password !== confirmPassword) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+  
     // Aquí, añade la lógica para manejar el envío del formulario
-    dispatch(register());
+    dispatch(register({
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      password1: password,
+      password2: confirmPassword,
+      phone_number: phoneNumber,
+      // Añade los otros campos si los necesitas
+    }));
+  
     handleClose();
   };
-
   const handlePhoneNumberChange = (e) => {
     const value = e.target.value;
     if (value.length > 10) { 
