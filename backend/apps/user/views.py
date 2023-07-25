@@ -32,12 +32,12 @@ def register_account(request):
     if form.is_valid():
         email=request.POST["email"]
         MailSubscribers.objects.create(email=email)
-        send_mail(
+        '''send_mail(
             'Greacias por crear tu cuenta en Markt',
             'creaste una cuenta',
             settings.EMAIL_HOST_USER,
             [email]
-        )
+        )'''
         form.save()
         return Response({'message': 'Cuenta creada exitosamente'})
     else:
@@ -138,14 +138,14 @@ def login_user_client(request):
     Returns:
         Json : Mensaje de confirmacion o error
     '''
-    email=request.email['email']
-    password=request.password['password']
+    email=request.data['email']
+    password=request.data['password']
     user=authenticate(request,username=email,password=password)
     if user is not None:
         login(request,user)
-        return Response({"message":"SI existe la cuenta"+request.data})
+        return Response({"message":"SI existe la cuenta"+str(request.data)})
     else:
-        return Response({"message":"no existe la cuenta"+request.data})
+        return Response({"message":"no existe la cuenta"+str(request.data)})
 
 
 #Client
