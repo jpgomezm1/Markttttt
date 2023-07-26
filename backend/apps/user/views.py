@@ -141,10 +141,9 @@ def login_user_client(request):
         user=authenticate(request,username=email,password=password)
         if user is not None:
             login(request,user)
-            # Aqui obtenemos la información del usuario que queremos retornar
-            User = get_user_model()
-            user_info = User.objects.filter(email=email).values('first_name', 'email', 'last_name','phone_number')
-            return Response({"message":"SI existe la cuenta", "user_info": user_info})
+            user=User.objects.filter(email=email)
+            serializer=UserClientSerializer(user,many=True)
+            return Response({"message":"SI existe la cuenta", "user_info": serializer.data})
         else:
             return Response({"message":"no existe la cuenta"})
     else:
