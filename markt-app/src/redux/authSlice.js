@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const initialState = { isAuthenticated: false, status: 'idle', error: null };
+const initialState = { isAuthenticated: false, status: 'idle', error: null, user: null };
 
 export const register = createAsyncThunk(
   'auth/register',
@@ -9,7 +9,7 @@ export const register = createAsyncThunk(
     try {
       const response = await axios.post('http://localhost:8000/user/register/', userData);
       if (response.status === 200 && response.data.message === "Cuenta creada exitosamente") {
-        return response.data; // Cuando la cuenta se crea exitosamente, debes retornar los datos, no rechazarlos
+        return response.data.user_info[0]; // Cambio aquí
       } else {
         return thunkAPI.rejectWithValue(response.data);
       }
@@ -25,7 +25,7 @@ export const login = createAsyncThunk(
     try {
       const response = await axios.post('http://localhost:8000/user/login_user/', userData);
       if (response.status === 200 && response.data.message === "SI existe la cuenta") {
-        return response.data;
+        return response.data.user_info[0]; // Cambio aquí
       } else {
         return thunkAPI.rejectWithValue(response.data);
       }
@@ -43,6 +43,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.error = null;
       state.status = 'idle';
+      state.user = null;
     },
   },
   extraReducers: (builder) => {
@@ -53,7 +54,7 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, {payload}) => {
         state.status = 'succeeded';
         state.isAuthenticated = true;
-        state.user = payload; // Asegúrate de que la respuesta del servidor incluye los datos del usuario
+        state.user = payload; 
       })
       .addCase(login.rejected, (state, action) => {
         state.status = 'failed';
@@ -65,7 +66,7 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
         state.isAuthenticated = true;
-        state.user = payload; // Asegúrate de que la respuesta del servidor incluye los datos del usuario
+        state.user = payload;
       })
       .addCase(register.rejected, (state, action) => {
         state.status = 'failed';
@@ -77,6 +78,7 @@ const authSlice = createSlice({
 export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;
+
 
 
 

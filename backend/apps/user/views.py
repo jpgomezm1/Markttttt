@@ -2,6 +2,9 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from django.forms.models import model_to_dict
+from django.contrib.auth import get_user_model
+
 
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
@@ -138,7 +141,10 @@ def login_user_client(request):
         user=authenticate(request,username=email,password=password)
         if user is not None:
             login(request,user)
-            return Response({"message":"SI existe la cuenta"})
+            # Aqui obtenemos la información del usuario que queremos retornar
+            User = get_user_model()
+            user_info = User.objects.filter(email=email).values('first_name', 'email', 'last_name','phone_number')
+            return Response({"message":"SI existe la cuenta", "user_info": user_info})
         else:
             return Response({"message":"no existe la cuenta"})
     else:

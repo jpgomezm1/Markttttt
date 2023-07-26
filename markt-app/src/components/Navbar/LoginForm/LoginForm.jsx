@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Link } from '@mui/material';
+import { Box, TextField, Button, Typography, Link, IconButton, CircularProgress, Snackbar, Alert } from '@mui/material';
 import { motion } from 'framer-motion';
 import RegisterForm from './RegisterForm';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../../redux/authSlice';
 import logo from '../../../assets/logos/thelogo.png'
-import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
 
 const LoginForm = ({ handleClose, handleGuest }) => {
@@ -13,25 +12,46 @@ const LoginForm = ({ handleClose, handleGuest }) => {
   const [password, setPassword] = useState("");
   const [formType, setFormType] = useState("login");
   const dispatch = useDispatch();
+  const { status, error, user } = useSelector((state) => state.auth);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("error");
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbarOpen(false);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Verificación de que todos los campos están llenos
+  
     if (email === "" || password === "") {
-      alert("Por favor, llena todos los campos.");
+      setSnackbarMessage("Por favor, llena todos los campos.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
       return;
     }
-    
-    dispatch(login({email, password}));
-    handleClose();
+  
+    dispatch(login({email, password}))
+      .then((action) => {
+        if (login.fulfilled.match(action)) {
+          // Si la acción es 'fulfilled' (es decir, si el inicio de sesión fue exitoso), entonces cierra el modal después de 5 segundos.
+          setTimeout(handleClose, 3000);
+        }
+      });
   };
 
   const handleRegister = () => {
     setFormType("register");
   }
 
+
   return formType === "login" ? (
+    <>
     <motion.div
       initial={{ opacity: 0, y: -100 }}
       animate={{ opacity: 1, y: 0 }}
@@ -40,14 +60,14 @@ const LoginForm = ({ handleClose, handleGuest }) => {
       sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f2f2f2', borderRadius: '15px', padding: '30px', maxWidth: '400px', margin: 'auto' }}
     >
       <IconButton
-    edge="end"
-    color="inherit"
-    aria-label="close"
-    onClick={handleClose}
-    sx={{ mb: 2, position: 'absolute', top: '10px', right: '10px' }}
-  >
-    <Close />
-  </IconButton>
+        edge="end"
+        color="inherit"
+        aria-label="close"
+        onClick={handleClose}
+        sx={{ mb: 2, position: 'absolute', top: '10px', right: '10px' }}
+      >
+        <Close />
+      </IconButton>
       <img src={logo} alt="logo" style={{ width: '120px', marginBottom: '20px' }} />
       <Typography variant="h4" sx={{ fontFamily: 'Poppins', marginBottom: '20px', color: '#333' }}>Ingresar</Typography>
       <Box className="input-container" sx={{ width: '100%', marginBottom: '20px' }}>
@@ -68,6 +88,27 @@ const LoginForm = ({ handleClose, handleGuest }) => {
           fullWidth
           sx={{ marginBottom: '20px', backgroundColor: '#e8e8e8', borderRadius: '10px', fontFamily: 'Poppins' }}
         />
+        {status === 'loading' && <CircularProgress />}
+        {status === 'failed' && 
+          <>
+            <p>Error: Ya estas registrado con Markt?</p>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+              <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+                {error}
+              </Alert>
+            </Snackbar>
+          </>
+        }
+        {status === 'succeeded' && 
+          <>
+            <p>Bienvenido, {user.first_name}!</p>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+              <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                Bienvenido, {user.first_name}!
+              </Alert>
+            </Snackbar>
+          </>
+        }
         <Link
           component="button"
           variant="body2"
@@ -101,6 +142,7 @@ const LoginForm = ({ handleClose, handleGuest }) => {
         </Button>
       </Box>
     </motion.div>
+    </>
   ) : (
     <RegisterForm setFormType={setFormType} handleClose={handleClose} />
   );

@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { register } from '../../../redux/authSlice'; // asegúrate de que la ruta sea correcta
 import './LoginForm.css';
 import logo from '../../../assets/logos/thelogo.png'
+import { useSelector } from 'react-redux';
 
 const RegisterForm = ({ handleClose, setFormType }) => {
   const dispatch = useDispatch();
@@ -17,6 +18,8 @@ const RegisterForm = ({ handleClose, setFormType }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
+
+
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
