@@ -2,8 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from django.forms.models import model_to_dict
-from django.contrib.auth import get_user_model
+
 
 
 from rest_framework.views import APIView
