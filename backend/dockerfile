@@ -10,7 +10,7 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libpq-dev && \
+    apt-get install -y --no-install-recommends libpq-dev netcat-openbsd && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -21,8 +21,14 @@ RUN pip install --upgrade pip && \
 # Copy the Django project into the container
 COPY . /app/
 
+# Copy the custom entrypoint script into the container
+COPY entrypoint.sh /app/
+
+# Ensure the entrypoint script is executable
+RUN chmod +x /app/entrypoint.sh
+
 # Expose the port on which Django runs (adjust if needed)
 EXPOSE 8000
 
-# Run Django development server
-CMD ["python", "manage.py", "runserver"]
+# Use the custom entrypoint script to start the server
+ENTRYPOINT ["/app/entrypoint.sh"]

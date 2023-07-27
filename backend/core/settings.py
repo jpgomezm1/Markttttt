@@ -102,13 +102,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    #'default': env.db("DATABASE_URL", default="postgres:///markt"),
+    #'default': env.db("DATABASE_URL", default="postgres:///markt"), #SIN DOCKER
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'markt',
         'USER': 'postgres',
         'PASSWORD': 'postgres1234',
-        'HOST': '127.0.0.1',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
