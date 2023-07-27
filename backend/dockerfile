@@ -1,4 +1,4 @@
-# Use the official Python image
+# Use the official Python image as the base image
 FROM python:3.9
 
 # Set environment variables
@@ -9,20 +9,20 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libpq-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt /app/
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 
-# Copy the Django project files into the container
+# Copy the Django project into the container
 COPY . /app/
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
+# Expose the port on which Django runs (adjust if needed)
+EXPOSE 8000
 
-# Run the Django development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Run Django development server
+CMD ["python", "manage.py", "runserver"]

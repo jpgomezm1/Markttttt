@@ -1,12 +1,26 @@
 version: '3'
-
 services:
   web:
     build: .
-    command: python src/ 
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     environment:
       - DJANGO_SETTINGS_MODULE=core.settings
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres1234
+      - POSTGRES_DB=markt
+    depends_on:
+      - db
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres1234
+      - POSTGRES_DB=markt
+    volumes:
+      - postgres_data:/var/lib/postgresql/15/data/
+
+volumes:
+  postgres_data:
