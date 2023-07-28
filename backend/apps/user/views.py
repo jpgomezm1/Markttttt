@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.password_validation import validate_password
 from django.contrib import messages
 
 
@@ -124,6 +125,9 @@ def delete_account(request):
     except ObjectDoesNotExist:
         return Response({'message': 'La cuenta a eliminar no existe'})
 
+
+#Client
+
 @api_view(['POST'])
 def login_user_client(request):
     '''Metodo para hacer el Login
@@ -134,24 +138,53 @@ def login_user_client(request):
     Returns:
         Json : Mensaje de confirmacion o error
     '''
-    if request.method=='POST':
-        email=request.data['email']
-        password=request.data['password']
-        user=authenticate(request,username=email,password=password)
-        if user is not None:
-            login(request,user)
-            user=User.objects.filter(email=email)
-            serializer=UserClientSerializer(user,many=True)
-            return Response({"message":"SI existe la cuenta", "user_info": serializer.data})
-        else:
-            return Response({"message":"no existe la cuenta"})
-    else:
-        return Response({"message":"retorna la pagina de login"})
+    email=request.data['email']
+    password=request.data['password']
 
-#Client
+    user=authenticate(request,username=email,password=password)
+    if user is not None:
+        login(request,user)
+        user=User.objects.filter(email=email)
+        serializer=UserClientSerializer(user,many=True)
+        return Response({"message":"SI existe la cuenta", "user_info": serializer.data})
+    
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({"message": "No existe una cuenta con este email."})
+    
+    if not user.check_password(password):
+        return Response({"message": "Contraseña incorrecta."})
 
 #Seller
 
+@api_view(['POST'])
+def login_user_seller(request):
+    '''Metodo para hacer el Login del vendedor
+
+    Args:
+        request (): django
+
+    Returns:
+        Json : Mensaje de confirmacion o error
+    '''
+    email=request.data['email']
+    password=request.data['password']
+    user=authenticate(request,username=email,password=password)
+    if user is not None:
+        login(request,user)
+        user=User.objects.filter(email=email)
+        serializer=UserSellerSerializer(user,many=True)
+        return Response({"message":"SI existe la cuenta", "user_info": serializer.data})
+    
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({"message": "No existe una cuenta con este email."})
+    
+    if not user.check_password(password):
+        return Response({"message": "Contraseña incorrecta."})
+    
 #Support
 def get_social_media_data(*args,data):
     '''metodo que toma todos los *args para poder sacar el valor de estos y 
