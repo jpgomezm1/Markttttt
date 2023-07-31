@@ -42,9 +42,9 @@ PROJECT_APPS=[
 ECOMMERCE_APPS=[]
 THIRD_PARTY_APPS=[
     'corsheaders',
-    'rest_framework',
     'djoser',
     'social_django',
+    'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'ckeditor',
@@ -191,6 +191,11 @@ STATICFILES_DIRS = [
 #    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 #    'PAGE_SIZE': 12
 #}
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 
 AUTHENTICATION_BACKENDS = (

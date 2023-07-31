@@ -15,12 +15,12 @@ from .forms import *
 from .serializers import *
 from apps.mail.models import MailSubscribers
 
-
-
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.core.mail import send_mail
 from django.conf import settings
+
+from rest_framework_simplejwt.authentication import  JWTAuthentication
 #All
 
 #CRUD Account
@@ -140,7 +140,7 @@ def login_user_client(request):
     '''
     email=request.data['email']
     password=request.data['password']
-
+    print(f'{dir(JWTAuthentication)} ASLDJKFASLDKFJADF')
     user=authenticate(request,username=email,password=password)
     if user is not None:
         login(request,user)

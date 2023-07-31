@@ -3,16 +3,30 @@ from django.views.generic import TemplateView
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [    
     path('admin/', admin.site.urls),
+
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
     path('user/',include('django.contrib.auth.urls')),
     path('user/',include('apps.user.urls')),
+
     path('api/stores/',include('apps.stores.urls')),
+
     path('api/products/',include('apps.products.urls')),
+
     path('lists/',include('apps.lists.urls')),
+
     path('orders/',include('apps.orders.urls')),
+    
     path('mail/',include('apps.mail.urls')),
+    
     path('stores/',include('apps.stores.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
