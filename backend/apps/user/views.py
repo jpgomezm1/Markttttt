@@ -20,7 +20,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.conf import settings
 
-from rest_framework_simplejwt.authentication import  JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
 #All
 
 #CRUD Account
@@ -44,7 +44,8 @@ def register_account(request):
         print(f"Formulario no válido: {error_message}")
         return Response({'ERROR Message': error_message})
 
-#@login_required #si se quiere probar con postman se debe comentar
+#@permission_classes([IsAuthenticated])
+#@login_required
 @api_view(['GET'])
 def get_account_info(request):
     '''Metodo para obtener la informacion de la cuenta
@@ -57,9 +58,9 @@ def get_account_info(request):
     '''
     
     try:
-        user=get_user('VendedorEjemplo3@gmail.com')#Ejemplo Vendedor #ELIMINAR CUANDO YA NO USE POSTMAN
+        #user=get_user('VendedorEjemplo1@gmail.com')#Ejemplo Vendedor #ELIMINAR CUANDO YA NO USE POSTMAN
         #user=get_user("ClienteEjemplo4@gmail.com")#Ejemplo cliente #ELIMINAR CUANDO YA NO USE POSTMAN
-        #user=get_user(request.user)
+        user=get_user(request.user)
         print(user.role)
     except ObjectDoesNotExist:
         return Response({'message': 'La cuenta no existe'})
@@ -69,7 +70,8 @@ def get_account_info(request):
         serializer=UserClientSerializer(user,many=False)
     return Response(serializer.data)
 
-#@login_required #si se quiere probar con postman se debe comentar
+@permission_classes([IsAuthenticated])
+@login_required #si se quiere probar con postman se debe comentar
 @api_view(['PUT'])
 def update_account_info(request):
     '''Metodo para actualizar la cuenta
@@ -81,32 +83,43 @@ def update_account_info(request):
         Json : Mensaje de confirmacion o error
     '''
     try:
-        user=get_user("VendedorEjemplo3@gmail.com")#Ejemplo vendedor #ELIMINAR CUANDO YA NO USE POSTMAN
+        #user=get_user("VendedorEjemplo3@gmail.com")#Ejemplo vendedor #ELIMINAR CUANDO YA NO USE POSTMAN
         #user=get_user("clientePostman1@gmail.com")#Ejemplo cliente #ELIMINAR CUANDO YA NO USE POSTMAN
-        #user=get_user(request.user)
+        user=get_user(request.user)
+        print(user)
     except ObjectDoesNotExist:
         return Response({'message': 'La cuenta no existe'})
 
     if is_seller(user):
         form=UpdateSellerAccForm(request.data,instance=user)
         social_media=get_social_media_data('facebook','instagram','twitter',data=request.data)
+        if form.is_valid():
+            sm=form.save(commit=False)#socialmedia update
+            sm.social_media=social_media
+            sm.save()
+            return Response({'message': 'Cuenta actualizada exitosamente'})
+        else:
+            errors = form.errors
+            error_message = {}
+            for field, error_list in errors.items():
+                error_message[field] = error_list[0]
+            return Response({'ERROR Message': error_message})
     else:
         form=UpdateClientAccForm(request.data,instance=user)
-    
-    if form.is_valid():
-        sm=form.save(commit=False)#socialmedia update
-        sm.social_media=social_media
-        sm.save()
-        return Response({'message': 'Cuenta actualizada exitosamente'})
-    else:
-        errors = form.errors
-        error_message = {}
-        for field, error_list in errors.items():
-            error_message[field] = error_list[0]
-        return Response({'ERROR Message': error_message})    
+        if form.is_valid():
+            form.save()
+            return Response({'message': 'Cuenta actualizada exitosamente'})
+        else:
+            errors = form.errors
+            error_message = {}
+            for field, error_list in errors.items():
+                error_message[field] = error_list[0]
+            return Response({'ERROR Message': error_message})
+        
 
 
-#@login_required #si se quiere probar con postman se debe comentar
+@permission_classes([IsAuthenticated])
+@login_required #si se quiere probar con postman se debe comentar
 @api_view(['DELETE'])
 def delete_account(request):
     '''Metodo para eliminar un usuario
@@ -118,8 +131,8 @@ def delete_account(request):
         Json : Mensaje de confirmacion o error
     '''
     try:
-        user=get_user("clientePostman3@gmail.com")#Ejemplo cliente #ELIMINAR CUANDO YA NO USE POSTMAN
-        #user=get_user(request.user)
+        #user=get_user("clientePostman3@gmail.com")#Ejemplo cliente #ELIMINAR CUANDO YA NO USE POSTMAN
+        user=get_user(request.user)
         user.delete()
         return Response({'message': 'Cuenta eliminado exitosamente'})
     except ObjectDoesNotExist:
@@ -140,13 +153,20 @@ def login_user_client(request):
     '''
     email=request.data['email']
     password=request.data['password']
-    print(f'{dir(JWTAuthentication)} ASLDJKFASLDKFJADF')
     user=authenticate(request,username=email,password=password)
     if user is not None:
         login(request,user)
-        user=User.objects.filter(email=email)
-        serializer=UserClientSerializer(user,many=True)
-        return Response({"message":"SI existe la cuenta", "user_info": serializer.data})
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+        user_data = User.objects.filter(email=email)
+        serializer = UserClientSerializer(user_data, many=True)
+        return Response({
+            "message": "Inicio de sesión exitoso",
+            "user_info": serializer.data,
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        })
     
     try:
         user = User.objects.get(email=email)
@@ -175,7 +195,9 @@ def login_user_seller(request):
         login(request,user)
         user=User.objects.filter(email=email)
         serializer=UserSellerSerializer(user,many=True)
-        return Response({"message":"SI existe la cuenta", "user_info": serializer.data})
+        return Response({"message":"Inicio de sesión exitoso",
+                        "user_info": serializer.data
+                        })
     
     try:
         user = User.objects.get(email=email)

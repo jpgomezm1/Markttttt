@@ -24,7 +24,7 @@ export const login = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const response = await axios.post('http://localhost:8000/user/login_user/', userData);
-      if (response.status === 200 && response.data.message === "SI existe la cuenta") {
+      if (response.status === 200 && response.data.message === "Inicio de sesión exitoso") {
         return response.data.user_info[0]; // Cambio aquí
       } else {
         return thunkAPI.rejectWithValue(response.data);

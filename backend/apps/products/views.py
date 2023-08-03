@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 
 from .support import *
@@ -19,7 +19,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from apps.lists.models import WishList
 from apps.lists.serializers import WishListSeri
-#from apps.lists.views import get_all_wishlists
+
+from rest_framework.permissions import IsAuthenticated
 
 #All
 @api_view(['GET'])
@@ -59,6 +60,7 @@ def detail_product(request,store_id,product_id):
     except:
         return Response({"ERROR":"no se encontró el producto buscado"})
 
+
 @api_view(['GET'])
 def get_all_products(request):
     '''metodo para obtener todas los productos existentes, luego podrá
@@ -76,8 +78,8 @@ def get_all_products(request):
 
 #Client
 
-#@login_required #si se quiere probar con postman se debe comentar
-#@user_passes_test(is_seller) #si se quiere probar con postman se debe comentar
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['PUT'])
 def add_product_to_wishlist(request,wishlist_id,product_id):
     '''Metodo de para poder añadir un producto a una wishlist en especifico
@@ -90,9 +92,7 @@ def add_product_to_wishlist(request,wishlist_id,product_id):
     Returns:
         Response: Retorna mensaje o error al momento de crear el producto
     '''
-    user=get_user(email="ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
-    #print(f'{request.user} REQUEST USER')
-    #user=get_user(request.user)
+    user=get_user(request.user)
     wishlists=WishList.objects.filter(user=user)
     wishlist=wishlists.filter(_id=wishlist_id).first()
     if wishlist:#Existencia del wishlist
@@ -104,8 +104,8 @@ def add_product_to_wishlist(request,wishlist_id,product_id):
         return Response({'message': 'Producto añadido correctamente a la wishlist'})
     return Response({'message': 'ERROR al añadir el producto ya que la wishlist no existe'})
 
-#@login_required #si se quiere probar con postman se debe comentar
-#@user_passes_test(is_seller) #si se quiere probar con postman se debe comentar
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['PUT'])
 def rm_product_from_wishlist(request,wishlist_id,product_id):
     '''Metodo de para poder eliminar un producto de la wishlist
@@ -118,8 +118,7 @@ def rm_product_from_wishlist(request,wishlist_id,product_id):
     Returns:
         Response: Retorna mensaje o error al momento de eliminar el producto
     '''
-    user=get_user(email="ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
-    #user=get_user(request.user)
+    user=get_user(request.user)
     wishlist=WishList.objects.filter(user=user).filter(_id=wishlist_id).first()
     if wishlist:
         try: #Existencia del producto
@@ -134,8 +133,8 @@ def rm_product_from_wishlist(request,wishlist_id,product_id):
 #Seller
 
 ######CRUD Product
-#@login_required #si se quiere probar con postman se debe comentar
-#@user_passes_test(is_seller) #si se quiere probar con postman se debe comentar
+#@permission_classes([IsAuthenticated])
+#@login_required
 @api_view(['POST'])
 def create_product(request):
     '''Crear producto y lo añade directamente al inventario con stock en 0
@@ -163,8 +162,8 @@ def create_product(request):
     else:
         return Response({'ERROR':form.errors})
 
-#@login_required #si se quiere probar con postman se debe comentar
-#@user_passes_test(is_seller) #si se quiere probar con postman se debe comentar
+#@permission_classes([IsAuthenticated])
+#@login_required
 @api_view(['PUT'])
 def update_product(request, product_id):
     '''actualizar producto
@@ -190,8 +189,8 @@ def update_product(request, product_id):
     else:
         return Response({'ERROR': 'Producto no encontrado'})
 
-#@login_required #si se quiere probar con postman se debe comentar
-#@user_passes_test(is_seller) #si se quiere probar con postman se debe comentar
+#@permission_classes([IsAuthenticated])
+#@login_required
 @api_view(['DELETE'])
 def delete_product(request,product_id):
     '''Eliminar producto

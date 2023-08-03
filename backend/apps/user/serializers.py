@@ -11,4 +11,4 @@ class UserClientSerializer(serializers.ModelSerializer):
 class UserSellerSerializer(serializers.ModelSerializer):
     class Meta:
         model=Seller
-        fields='store_name','email','phone_number','social_media'
+        fields='id','store_name','email','phone_number','social_media'

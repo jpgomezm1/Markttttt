@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 
@@ -17,14 +17,14 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 from apps.products.serializers import *
 
-
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import *
 
 #FAVORITE SELLERS
 
-#@login_required
-#@user_passes_test(is_client)
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['GET'])
 def get_fav_sellers(request):
     '''Metodo para obtener todos las tiendas favoritas del usuario
@@ -36,15 +36,15 @@ def get_fav_sellers(request):
         Response: Retorna Serializado todos los datos encontrados
     '''
     
-    #user=get_user(request.user)
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     sellers=FavoriteCompanies.objects.filter(user=user)
     print(f'PASAAA {sellers}')
     serializers=FavSeller(sellers,many=True)
     return Response(serializers.data)
 
-#@login_required
-#@user_passes_test(is_client)
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['POST'])
 def add_fav_seller(request):
     '''metodo para añadir una tienda a la lista de favoritos
@@ -65,8 +65,8 @@ def add_fav_seller(request):
     except:
         return Response({'message': 'Ha ocurrido un error'})
 
-#@login_required
-#@user_passes_test(is_client)
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['DELETE'])
 def del_fav_seller(request,seller_id):
     '''metodo para eliminar una tienda de la lista de favoritos
@@ -86,8 +86,8 @@ def del_fav_seller(request,seller_id):
 
 #CRUD Wishlist
 
-#@login_required
-#@user_passes_test(is_client)
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['GET'])
 def get_all_wishlists(request):
     """metodo para obtener todas las wishlist que tiene un usuario, sin los productos que hay dentro de esta
@@ -99,15 +99,15 @@ def get_all_wishlists(request):
         Response: Retorna Serializado todos los datos recibidos
     """
 
-    #user=get_user(request.user)
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     wishlists=WishList.objects.filter(user=user)
     print(wishlists.values())
     serializer=WishListSeri(wishlists,many=True)
     return Response(serializer.data)
 
-#@login_required
-#@user_passes_test(is_client)
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['GET'])
 def get_wishlist(request,wishlist_id):
     """metodo para obtener una wishlist en especifico 
@@ -119,14 +119,15 @@ def get_wishlist(request,wishlist_id):
     Returns:
         Response: Retorna Serializado todos los datos recibidos
     """
-    #user=get_user(request.user)
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     wishlists=WishList.objects.filter(user=user)
     wishlist=wishlists.filter(_id=wishlist_id)
     serializer=WishListSeri(wishlist,many=True)
     return Response(serializer.data)
 
-#@login_required
+@permission_classes([IsAuthenticated])
+@login_required
 #@user_passes_test(is_client)
 @api_view(['POST'])
 def create_wishlist(request):
@@ -138,8 +139,8 @@ def create_wishlist(request):
     Returns:
         Response: Mensaje de confirmación
     '''
-    #user=get_user(request.user)
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     form=CreateWishList(request.data)
     if form.is_valid():
         wishlist=form.save(commit=False)
@@ -149,8 +150,8 @@ def create_wishlist(request):
     return Response({'error':'no se pudo crear'})
         
 
-#@login_required
-#@user_passes_test(is_client)
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['PUT'])
 def update_wishlist(request,wishlist_id):
     '''Metodo para actualizar el nombre de una wishlist en especifico
@@ -162,8 +163,8 @@ def update_wishlist(request,wishlist_id):
     Returns:
         Response: Mensaje de confirmacion luego de actualizar los datos
     '''
-    #user=get_user(request.user)
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     print('LLEGA HASTA ACA')
     wishlists=WishList.objects.filter(user=user)
     wishlist=wishlists.get(_id=wishlist_id)
@@ -174,8 +175,8 @@ def update_wishlist(request,wishlist_id):
     else:
         return Response({'ERROR': 'No se pudo actualizar la wishlist'})
 
-#@login_required
-#@user_passes_test(is_client)
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['DELETE'])
 def delete_wishlist(request,wishlist_id):
     '''Metodo para eliminar una wishlist en especifico
@@ -187,16 +188,16 @@ def delete_wishlist(request,wishlist_id):
     Returns:
         Response: Mensaje de confirmacion luego de eliminar
     '''
-    #user=get_user(request.user)
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     wishlists=WishList.objects.filter(user=user)
     wishlist=wishlists.get(_id=wishlist_id)
     wishlist.delete()
     return Response({'message': 'Producto eliminado exitosamente'})
 
 
-#@login_required #si se quiere probar con postman se debe comentar
-#@user_passes_test(is_seller) #si se quiere probar con postman se debe comentar
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['GET'])
 def get_wishlist_products(request,wishlist_id):
     '''metodo para obtener todos los productos que tiene una wishlist
@@ -208,8 +209,8 @@ def get_wishlist_products(request,wishlist_id):
     Returns:
         Response: Retorna Serializado todos los datos encontrados
     '''
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
-    #user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
     wishlists=WishList.objects.filter(user=user)
     wishlist=wishlists.filter(_id=wishlist_id).first()
     #Filtrar los datos para obtener una wishlist
@@ -225,24 +226,24 @@ def get_wishlist_products(request,wishlist_id):
 #Addresses
 
 #CRUD Addresses
-#CRUD Addresses
-#@login_required #si se quiere probar con postman se debe comentar
-#@user_passes_test(is_seller) #si se quiere probar con postman se debe comentar
+
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['GET'])
 def get_addresses(request):
     
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
-    #user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
     addresses=Addresses.objects.filter(user=user)
     serializer=AddressSerializer(addresses,many=True)
     return Response(serializer.data)
 
-#@login_required
-#@user_passes_test(is_client)
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['POST'])
 def add_address(request):
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
-    #user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
     form=CreateAddressForm(request.data)
     if form.is_valid():
         address=form.save(commit=False)
@@ -252,24 +253,24 @@ def add_address(request):
     else:
         return Response({'message': 'Ha ocurrido un error'})
 
-#@login_required
-#@user_passes_test(is_client)
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['PUT'])
 def update_address(request,address_id):
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
-    #user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
     address=Addresses.objects.filter(user=user).get(id=address_id)
     for key in request.data:
         if request.data.get(key):
             setattr(address,key,request.data.get(key))
     return Response({'message': 'Direccion actualizada exitosamente'})
 
-#@login_required
-#@user_passes_test(is_client)
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['DELETE'])
 def delete_address(request,address_id):
-    user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
-    #user=get_user(request.user)
+    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
+    user=get_user(request.user)
     address=Addresses.objects.filter(user=user).get(id=address_id).delete()
     return Response({'message': 'Direccion eliminada exitosamente'})
 

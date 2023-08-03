@@ -1,6 +1,10 @@
 from .user.models import *
 
+from rest_framework.decorators import permission_classes
+
+from rest_framework.permissions import IsAuthenticated
 #metodos de soporte para auth
+
 def is_seller(user):
     '''define si el usuario es vendedor'''
     return user.role=='SELLER' or user.role=='ADMIN'
