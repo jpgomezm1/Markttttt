@@ -32,9 +32,7 @@ def register_account(request):
         email=request.data["email"]  # y aquí
         MailSubscribers.objects.create(email=email)
         user = form.save(commit=False)
-        print("Usuario antes de guardar: ", user.__dict__)
         user.save()
-        print("Usuario después de guardar: ", user.__dict__)
         return Response({'message': 'Cuenta creada exitosamente'})
     else:
         errors = form.errors
@@ -44,8 +42,8 @@ def register_account(request):
         print(f"Formulario no válido: {error_message}")
         return Response({'ERROR Message': error_message})
 
-#@permission_classes([IsAuthenticated])
-#@login_required
+@permission_classes([IsAuthenticated])
+@login_required
 @api_view(['GET'])
 def get_account_info(request):
     '''Metodo para obtener la informacion de la cuenta
@@ -155,18 +153,21 @@ def login_user_client(request):
     password=request.data['password']
     user=authenticate(request,username=email,password=password)
     if user is not None:
-        login(request,user)
-        refresh = RefreshToken.for_user(user)
-        access_token = str(refresh.access_token)
-        refresh_token = str(refresh)
-        user_data = User.objects.filter(email=email)
-        serializer = UserClientSerializer(user_data, many=True)
-        return Response({
-            "message": "Inicio de sesión exitoso",
-            "user_info": serializer.data,
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-        })
+        if is_client(user):
+            login(request,user)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+            user_data = User.objects.filter(email=email)
+            serializer = UserClientSerializer(user_data, many=True)
+            return Response({
+                "message": "Inicio de sesión exitoso",
+                "user_info": serializer.data,
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+            })
+        else:
+            return Response({"message":"no puedes acceder a esta pagina"})
     
     try:
         user = User.objects.get(email=email)
@@ -192,12 +193,21 @@ def login_user_seller(request):
     password=request.data['password']
     user=authenticate(request,username=email,password=password)
     if user is not None:
-        login(request,user)
-        user=User.objects.filter(email=email)
-        serializer=UserSellerSerializer(user,many=True)
-        return Response({"message":"Inicio de sesión exitoso",
-                        "user_info": serializer.data
-                        })
+        if is_seller(user):
+            login(request,user)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+            user=User.objects.filter(email=email)
+            serializer=UserSellerSerializer(user,many=True)
+            return Response({
+                            "message":"Inicio de sesión exitoso",
+                            "user_info": serializer.data,
+                            "access_token": access_token,
+                            "refresh_token": refresh_token,
+                            })
+        else:
+            return Response({"message":"no puedes acceder a esta pagina"})
     
     try:
         user = User.objects.get(email=email)
