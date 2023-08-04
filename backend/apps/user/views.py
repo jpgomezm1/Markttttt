@@ -69,7 +69,7 @@ def get_account_info(request):
     return Response(serializer.data)
 
 @permission_classes([IsAuthenticated])
-@login_required #si se quiere probar con postman se debe comentar
+@login_required
 @api_view(['PUT'])
 def update_account_info(request):
     '''Metodo para actualizar la cuenta

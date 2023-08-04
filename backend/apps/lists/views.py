@@ -38,9 +38,7 @@ def get_fav_sellers(request):
     '''
     
     user=get_user(request.user)
-    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     sellers=FavoriteCompanies.objects.filter(user=user)
-    print(f'PASAAA {sellers}')
     serializers=FavSeller(sellers,many=True)
     return Response(serializers.data)
 
@@ -57,8 +55,7 @@ def add_fav_seller(request):
     Returns:
         json : mensaje de respuesta 
     '''
-    user="ClienteEjemplo1@gmail.com"#ELIMINAR CUANDO YA NO USE POSTMAN
-    #user=request.user
+    user=request.user
     try:
         user=User.objects.get(email=user)
         user_seller=User.objects.get(email=request.data.get('user_seller'))
@@ -104,7 +101,6 @@ def get_all_wishlists(request):
     """
 
     user=get_user(request.user)
-    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     wishlists=WishList.objects.filter(user=user)
     print(wishlists.values())
     serializer=WishListSeri(wishlists,many=True)
@@ -125,7 +121,6 @@ def get_wishlist(request,wishlist_id):
         Response: Retorna Serializado todos los datos recibidos
     """
     user=get_user(request.user)
-    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     wishlists=WishList.objects.filter(user=user)
     wishlist=wishlists.filter(_id=wishlist_id)
     serializer=WishListSeri(wishlist,many=True)
@@ -145,7 +140,6 @@ def create_wishlist(request):
         Response: Mensaje de confirmación
     '''
     user=get_user(request.user)
-    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     form=CreateWishList(request.data)
     if form.is_valid():
         wishlist=form.save(commit=False)
@@ -170,7 +164,6 @@ def update_wishlist(request,wishlist_id):
         Response: Mensaje de confirmacion luego de actualizar los datos
     '''
     user=get_user(request.user)
-    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     print('LLEGA HASTA ACA')
     wishlists=WishList.objects.filter(user=user)
     wishlist=wishlists.get(_id=wishlist_id)
@@ -196,7 +189,6 @@ def delete_wishlist(request,wishlist_id):
         Response: Mensaje de confirmacion luego de eliminar
     '''
     user=get_user(request.user)
-    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     wishlists=WishList.objects.filter(user=user)
     wishlist=wishlists.get(_id=wishlist_id)
     wishlist.delete()
@@ -217,7 +209,6 @@ def get_wishlist_products(request,wishlist_id):
     Returns:
         Response: Retorna Serializado todos los datos encontrados
     '''
-    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     user=get_user(request.user)
     wishlists=WishList.objects.filter(user=user)
     wishlist=wishlists.filter(_id=wishlist_id).first()
@@ -240,8 +231,6 @@ def get_wishlist_products(request,wishlist_id):
 @user_passes_test(is_client)
 @api_view(['GET'])
 def get_addresses(request):
-    
-    #user=get_user("ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
     user=get_user(request.user)
     addresses=Addresses.objects.filter(user=user)
     serializer=AddressSerializer(addresses,many=True)
