@@ -42,21 +42,33 @@ def add_order_items(request):
             order=order,
             address=address,
             )
-        
+        print('shippingAddresAAAAAAA')
         for i in order_items:
             product=Product.objects.get(_id=i['product'])
-            
-            item= OrderItem.objects.create(
-                product=product,
-                order=order,
-                name=product.name,
-                quantity=i['qty'],
-                price=i['price'],
-                #image=product.image.url
-            )
-            
-            product_inventory=Inventory.objects.get(product=product)
-            product_inventory.stock-=item.quantity
+            print(f'PRODODOODODOD {product.sizes}')
+            if product.sizes=='No':
+                item= OrderItem.objects.create(
+                    product=product,
+                    order=order,
+                    name=product.name,
+                    quantity=i['qty'],
+                    price=i['price'],
+                    #image=product.image.url
+                )
+                product_inventory=Inventory.objects.get(product=product)
+                product_inventory.stock-=item.quantity
+            else:
+                item=OrderItem.objects.create(
+                    product=product,
+                    order=order,
+                    name=product.name,
+                    size=i['size'],
+                    quantity=i['qty'],
+                    price=i['price'],
+                )
+                print('ERROR ACA')
+                product_inventory=Inventory.objects.get(product=product)
+                product_inventory.size_stock[i['size']]-=i['qty']
             product_inventory.save()
     serializer=OrderSerializer(order,many=False)
     return Response(serializer.data)
