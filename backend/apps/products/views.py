@@ -80,6 +80,7 @@ def get_all_products(request):
 
 @permission_classes([IsAuthenticated])
 @login_required
+@user_passes_test(is_client)
 @api_view(['PUT'])
 def add_product_to_wishlist(request,wishlist_id,product_id):
     '''Metodo de para poder añadir un producto a una wishlist en especifico
@@ -106,6 +107,7 @@ def add_product_to_wishlist(request,wishlist_id,product_id):
 
 @permission_classes([IsAuthenticated])
 @login_required
+@user_passes_test(is_client)
 @api_view(['PUT'])
 def rm_product_from_wishlist(request,wishlist_id,product_id):
     '''Metodo de para poder eliminar un producto de la wishlist
@@ -133,8 +135,10 @@ def rm_product_from_wishlist(request,wishlist_id,product_id):
 #Seller
 
 ######CRUD Product
-#@permission_classes([IsAuthenticated])
-#@login_required
+
+@permission_classes([IsAuthenticated])
+@login_required
+@user_passes_test(is_seller)
 @api_view(['POST'])
 def create_product(request):
     '''Crear producto y lo añade directamente al inventario con stock en 0
@@ -162,8 +166,9 @@ def create_product(request):
     else:
         return Response({'ERROR':form.errors})
 
-#@permission_classes([IsAuthenticated])
-#@login_required
+@permission_classes([IsAuthenticated])
+@login_required
+@user_passes_test(is_seller)
 @api_view(['PUT'])
 def update_product(request, product_id):
     '''actualizar producto
@@ -189,8 +194,9 @@ def update_product(request, product_id):
     else:
         return Response({'ERROR': 'Producto no encontrado'})
 
-#@permission_classes([IsAuthenticated])
-#@login_required
+@permission_classes([IsAuthenticated])
+@login_required
+@user_passes_test(is_seller)
 @api_view(['DELETE'])
 def delete_product(request,product_id):
     '''Eliminar producto

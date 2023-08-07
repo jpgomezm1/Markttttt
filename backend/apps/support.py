@@ -11,7 +11,7 @@ def is_seller(user):
 
 def is_client(user):
     '''define si el usuario es cliente'''
-    return user.Role=='CLIENT'
+    return user.role=='CLIENT'
 
 def get_user(email:str):
     '''Metodo de soporte para poder obtener el User
