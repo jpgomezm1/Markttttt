@@ -1,9 +1,19 @@
-from .user.models import *
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.decorators import permission_classes
-
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_404_NOT_FOUND
+
+from .user.models import *
+
 #metodos de soporte para auth
+def get_error(e):
+    if e==User.DoesNotExist or e==ObjectDoesNotExist:
+        return Response({"status": "error", "message": "No existe una cuenta con este correo electrónico."}, status=HTTP_404_NOT_FOUND)
+    else:
+        print(f'{e} ESTE ES EL ERROR')
+        return Response({"status": "error", "message": "Hubo un error en el servidor. Por favor, intenta nuevamente más tarde."}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
 def is_seller(user):
     '''define si el usuario es vendedor'''
