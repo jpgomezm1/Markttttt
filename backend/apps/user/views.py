@@ -41,7 +41,7 @@ def register_account(request):
                 error_message[field] = error_list[0]
             return Response({'ERROR Message': error_message,'status':'error'},status=HTTP_400_BAD_REQUEST)
     except Exception as e:
-        get_error(e)
+        return get_error(e)
 
 @permission_classes([IsAuthenticated])
 @login_required
@@ -67,7 +67,7 @@ def get_account_info(request):
             serializer=UserClientSerializer(user,many=False)
         return Response(serializer.data)
     except Exception as e:
-        get_error(e)
+        return get_error(e)
 
 @permission_classes([IsAuthenticated])
 @login_required
@@ -112,7 +112,7 @@ def update_account_info(request):
                     error_message[field] = error_list[0]
                 return Response({'ERROR Message': error_message})
     except Exception as e:
-        get_error(e)
+        return get_error(e)
 
 
 @permission_classes([IsAuthenticated])
@@ -133,7 +133,7 @@ def delete_account(request):
         user.delete()
         return Response({'message': 'Cuenta eliminado exitosamente'})
     except Exception as e:
-        get_error(e)
+        return get_error(e)
 
 
 #Client
@@ -171,7 +171,7 @@ def login_user_client(request):
         else:
                 return Response({"status": "error", "message": "Credenciales inválidas."}, status=HTTP_404_NOT_FOUND)
     except Exception as e:
-        get_error(e)
+        return get_error(e)
 
 
 #Seller
@@ -209,7 +209,7 @@ def login_user_seller(request):
         else:
                     return Response({"status": "error", "message": "Credenciales inválidas."}, status=HTTP_404_NOT_FOUND)
     except Exception as e:
-        get_error(e)
+        return get_error(e)
     
 #Support
 def get_social_media_data(*args,data):

@@ -1,26 +1,21 @@
 from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
-
-from .support import *
+from rest_framework.permissions import IsAuthenticated
 
 from apps.user.models import User
 from apps.support import *
-
 from apps.products.models import Product,Inventory
 from apps.products.forms import *
-
-from django.contrib.auth.decorators import login_required, user_passes_test
-
-from .serializers import ProductsSerializer, InventorySerializer
-
-from django.core.exceptions import ObjectDoesNotExist
-
 from apps.lists.models import WishList
 from apps.lists.serializers import WishListSeri
 
-from rest_framework.permissions import IsAuthenticated
+from .support import *
+from .serializers import ProductsSerializer, InventorySerializer
+
 
 #All
 @api_view(['GET'])
@@ -34,10 +29,13 @@ def get_store_products(request,store_id):
     Returns:
         Response: devuelve los datos serializados de los produtctos encontrados
     '''
-    user=User.objects.get(id=store_id)
-    products= Product.objects.filter(user=user)
-    serializer=ProductsSerializer(products,many=True)
-    return Response(serializer.data)
+    try:
+        user=User.objects.get(id=store_id)
+        products= Product.objects.filter(user=user)
+        serializer=ProductsSerializer(products,many=True)
+        return Response(serializer.data)
+    except Exception as e:
+        return get_error(e)
 
 @api_view(['GET'])
 def detail_product(request,store_id,product_id):
@@ -56,9 +54,9 @@ def detail_product(request,store_id,product_id):
         if exists:
             return Response(serializer.data)
         else:
-            return Response({"mensaje":"no se encontró el producto buscado"})
-    except:
-        return Response({"ERROR":"no se encontró el producto buscado"})
+            return Response({"mensaje":"no se encontró el producto buscado","status":"error"},status=HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return get_error(e)
 
 
 @api_view(['GET'])
@@ -72,10 +70,12 @@ def get_all_products(request):
     Returns:
         Response: Retorna Serializado todos los datos recibidos
     '''
-    products= Product.objects.all()
-    serializers=ProductsSerializer(products,many=True)
-    return Response(serializers.data)
-
+    try:
+        products= Product.objects.all()
+        serializers=ProductsSerializer(products,many=True)
+        return Response(serializers.data)
+    except Exception as e:
+        return get_error(e)
 #Client
 
 @permission_classes([IsAuthenticated])
@@ -99,11 +99,11 @@ def add_product_to_wishlist(request,wishlist_id,product_id):
     if wishlist:#Existencia del wishlist
         try: #Existencia del producto
             product=Product.objects.get(_id=product_id)
-        except ObjectDoesNotExist:
-            return Response({'ERROR': 'El producto no existe'})
+        except Exception as e:
+            return get_error(e)
         wishlist.products.add(product)
         return Response({'message': 'Producto añadido correctamente a la wishlist'})
-    return Response({'message': 'ERROR al añadir el producto ya que la wishlist no existe'})
+    return Response({'message': 'ERROR al añadir el producto ya que la wishlist no existe',"status":"error"})
 
 @permission_classes([IsAuthenticated])
 @login_required

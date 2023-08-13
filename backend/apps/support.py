@@ -9,8 +9,9 @@ from .user.models import *
 
 #metodos de soporte para auth
 def get_error(e):
-    if e==User.DoesNotExist or e==ObjectDoesNotExist:
-        return Response({"status": "error", "message": "No existe una cuenta con este correo electrónico."}, status=HTTP_404_NOT_FOUND)
+    
+    if isinstance(e,ObjectDoesNotExist): #or e==User.DoesNotExist:
+        return Response({"status": "error", "message": "No existe"}, status=HTTP_404_NOT_FOUND)
     else:
         print(f'{e} ESTE ES EL ERROR')
         return Response({"status": "error", "message": "Hubo un error en el servidor. Por favor, intenta nuevamente más tarde."}, status=HTTP_500_INTERNAL_SERVER_ERROR)
