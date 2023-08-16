@@ -3,10 +3,8 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.password_validation import validate_password
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.conf import settings
-
 
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view

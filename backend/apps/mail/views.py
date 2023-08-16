@@ -1,5 +1,3 @@
-from django.db import IntegrityError
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import *
@@ -20,9 +18,9 @@ def subscribe(request,email):
         settings.EMAIL_HOST_USER,
         [email]
         )
-        return Response({"Mensaje":"grax"})
-    except IntegrityError:
-        return Response({"Mensaje":"Este correo ya es suscriptor"})
+        return Response({"message":"grax"})
+    except Exception as e:
+        return get_error(e)
     
 
 @api_view(['POST'])
@@ -35,6 +33,6 @@ def unsubscribe(request,email):
             settings.EMAIL_HOST_USER,
             [email]
         )
-        return Response({"Mensaje":"suerte"})
-    except ObjectDoesNotExist:
-        return Response({"ERROR":"No puedes desuscribirte ya que este correo no era suscriptor"})
+        return Response({"message":"suerte"})
+    except Exception as e:
+        return get_error(e)
