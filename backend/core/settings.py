@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from datetime import timedelta
 import environ
 
 env=environ.Env()
@@ -42,9 +43,9 @@ PROJECT_APPS=[
 ECOMMERCE_APPS=[]
 THIRD_PARTY_APPS=[
     'corsheaders',
-    'rest_framework',
     'djoser',
     'social_django',
+    'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'ckeditor',
@@ -71,7 +72,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware', #SI SE QUIERE PROBAR POSTMAN SE DEBE COMENTAR
+    'django.middleware.csrf.CsrfViewMiddleware', #SI SE QUIERE PROBAR POSTMAN SE DEBE COMENTAR
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -102,12 +103,15 @@ ASGI_APPLICATION = 'core.asgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': env.db("DATABASE_URL", default="postgres:///markt"),
-    #'default': {
-     #   'ENGINE': 'django.db.backends.sqlite3',
-     #   'NAME': BASE_DIR / 'db.sqlite3',
-    #} 
-
+    #'default': env.db("DATABASE_URL", default="postgres:///markt"), #SIN DOCKER
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'markt',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres1234',
+        'HOST': 'db',
+        'PORT': '5432',
+    }
 }
 
 
@@ -188,7 +192,19 @@ STATICFILES_DIRS = [
 #    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 #    'PAGE_SIZE': 12
 #}
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": False,
+}
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',

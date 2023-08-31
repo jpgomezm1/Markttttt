@@ -18,8 +18,9 @@ from .support import *
 import json
 
 #Inventory
-#@login_required
-#@user_passes_test(is_seller)
+@permission_classes([IsAuthenticated])
+@login_required
+@seller_required(is_seller)
 @api_view(['GET'])
 def get_inventory(request):
     user=get_user("VendedorEjemplo1@gmail.com") #ELIMINAR CUANDO YA NO USE POSTMAN
@@ -31,8 +32,9 @@ def get_inventory(request):
     return Response(serializers.data)
 
 #Inventory
-#@login_required
-#@user_passes_test(is_seller)
+@permission_classes([IsAuthenticated])
+@login_required
+@seller_required(is_seller)
 @api_view(['PUT'])
 def update_inventory_product(request,product_id):
     user=get_user("VendedorEjemplo1@gmail.com") #ELIMINAR CUANDO YA NO USE POSTMAN

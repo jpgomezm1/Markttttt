@@ -32,3 +32,5 @@ class UpdateSellerAccForm(forms.ModelForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ('first_name','last_name','email','phone_number','facebook','instagram','twitter')
+
+        
