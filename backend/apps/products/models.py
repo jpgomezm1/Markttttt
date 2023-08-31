@@ -7,28 +7,37 @@ class Product(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True,
         limit_choices_to={'role': User.Role.SELLER})
-    SI_NO_CHOICES=[
-        ('Si','Si'),
-        ('No','No'),
-    ]
     name = models.CharField(max_length=200, null=False, blank=True)
-    sizes=models.CharField(max_length=3,null=True,choices=SI_NO_CHOICES,default='No')
+    price = models.DecimalField(
+        max_digits=7, decimal_places=2, null=False, blank=True)
     image = models.ImageField(null=True, blank=True,
                             default='/placeholder.png')
     description = models.TextField(null=False, blank=True)
     rating = models.DecimalField(
         max_digits=7, decimal_places=2, null=True, blank=True)
     num_reviews = models.IntegerField(null=True, blank=True, default=0)
-    price = models.DecimalField(
-        max_digits=7, decimal_places=2, null=False, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    # countInStock=ForeignKey(Inventory, on_delete=models.CASCADE, null=True)
     _id = models.AutoField(primary_key=True, editable=False)
 
+    class Meta:
+        abstract = True
+         
     def __str__(self):
         return str(self.name)
     
+class clothes(Product):
+    YES_NO_CHOICES=[
+        ('Si','Si'),
+        ('No','No'),
+    ]
+    sizes=models.CharField(max_length=3,null=True,choices=YES_NO_CHOICES,default='No')
 
+class accessories(Product):
+    YES_NO_CHOICES=[
+        ('Si','Si'),
+        ('No','No'),
+    ]
+    sizes=models.CharField(max_length=3,null=True,choices=YES_NO_CHOICES,default='No')
 
 class Inventory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False,

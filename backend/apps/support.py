@@ -73,10 +73,12 @@ def get_user(email:str):
         Response: User que se encuentra
     '''
     #user=request.user
-    user=User.objects.get(email=email)
-    print(user)
-    return user
-
+    try:
+        user=User.objects.get(email=email)
+        print(user)
+        return user
+    except Exception as e:
+        return get_error(e)
 '''def get_user(**kwargs):
     user=User.objects.get(**kwargs)
     return user'''
