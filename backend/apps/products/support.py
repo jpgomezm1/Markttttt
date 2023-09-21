@@ -27,8 +27,8 @@ def product_exists(product_id,**kwargs):
         serializer: para devolver la info del producto
     '''
     try: 
-        user=User.objects.get(**kwargs)
-        product= Product.objects.filter(user=user).get(_id=product_id)
+        user=get_user(**kwargs)
+        product= Product.objects.filter(user=user).get(id=product_id)
         if product:
             serializer=ProductsSerializer(product,many=False)
             return True,serializer

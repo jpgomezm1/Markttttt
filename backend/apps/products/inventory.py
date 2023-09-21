@@ -41,12 +41,12 @@ def update_inventory_product(request,product_id):
     #user=get_user(request.user)
     exists,serializer=product_exists(product_id,email=user)
     if exists:
-        product=Product.objects.get(_id=product_id)
+        product=Product.objects.get(id=product_id)
         inventory=Inventory.objects.get(product=product_id)
         if product.sizes=='Si':
             form =InventoryUpdateSizeStockForm(request.data,instance=inventory)
             sum=0
-            data=json.loads(request.data['size_stock'])
+            data=json.loads(request.data['stock'])
             for key in data:
                 value=data.get(key)
                 sum+=int(value)

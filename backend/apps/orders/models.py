@@ -20,7 +20,6 @@ class Order(models.Model):
     delivered_at = models.DateTimeField(
         auto_now_add=False, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    _id = models.AutoField(primary_key=True, editable=False)
 
     def __str__(self):
         return f'{str(self.user)} compra el {str(self.created_at.date())} a las {str(self.created_at.time())}'
@@ -35,7 +34,6 @@ class OrderItem(models.Model):
     price = models.DecimalField(
         max_digits=7, decimal_places=2, null=True, blank=True)
     image = models.CharField(max_length=200, null=True, blank=True)
-    _id = models.AutoField(primary_key=True, editable=False)
 
     def __str__(self):
         return str(self.name)
@@ -46,7 +44,6 @@ class ShippingAddress(models.Model):
     order = models.OneToOneField(
         Order, on_delete=models.CASCADE, null=True, blank=True)
     address = models.ForeignKey("lists.Addresses", on_delete=models.SET_NULL, null=True, blank=True)
-    _id = models.AutoField(primary_key=True, editable=False)
 
     def __str__(self):
         return str(self.address)

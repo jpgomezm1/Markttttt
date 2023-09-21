@@ -45,17 +45,7 @@ const authSlice = createSlice({
       state.status = 'idle';
       state.user = null;
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(login.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(login.fulfilled, (state, {payload}) => {
-        state.status = 'succeeded';
-        state.isAuthenticated = true;
-        state.user = payload; 
-      })
+  } 
       .addCase(login.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;

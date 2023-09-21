@@ -30,7 +30,7 @@ def get_store_products(request,store_id):
         Response: devuelve los datos serializados de los produtctos encontrados
     '''
     try:
-        user=User.objects.get(id=store_id)
+        user=Seller.objects.get(id=store_id)
         products= Product.objects.filter(user=user)
         serializer=ProductsSerializer(products,many=True)
         return Response(serializer.data)
@@ -96,10 +96,10 @@ def add_product_to_wishlist(request,wishlist_id,product_id):
     try:
         user=get_user(request.user)
         wishlists=WishList.objects.filter(user=user)
-        wishlist=wishlists.filter(_id=wishlist_id).first()
+        wishlist=wishlists.filter(id=wishlist_id).first()
         if wishlist:#Existencia del wishlist
             try: #Existencia del producto
-                product=Product.objects.get(_id=product_id)
+                product=Product.objects.get(id=product_id)
             except Exception as e:
                 return get_error(e)
             wishlist.products.add(product)
@@ -125,10 +125,10 @@ def rm_product_from_wishlist(request,wishlist_id,product_id):
     '''
     try:
         user=get_user(request.user)
-        wishlist=WishList.objects.filter(user=user).filter(_id=wishlist_id).first()
+        wishlist=WishList.objects.filter(user=user).filter(id=wishlist_id).first()
         if wishlist:
             try: #Existencia del producto
-                product=Product.objects.get(_id=product_id)
+                product=Product.objects.get(id=product_id)
             except ObjectDoesNotExist:
                 return Response({'ERROR': 'El producto no existe',"status":"error"},status=HTTP_404_NOT_FOUND)
             wishlist.products.remove(product)
@@ -157,18 +157,22 @@ def create_product(request):
     '''
     try:
         form=AddProductForm(request.data)
-        #user=get_user('VendedorEjemplo1@gmail.com') #ELIMINAR CUANDO YA NO USE POSTMAN
-        user=request.user
+        user=get_user(request.user)
+        print('recibo')
         if form.is_valid():
             product=form.save(commit=False)
-            product.user=user #ELIMINAR CUANDO YA NO USE POSTMAN
-            product.save()
-            if request.data["sizes"][0]=='S':
-                Inventory.objects.create( user=user, product=product,size_stock={"xs":0,"s":0,"m":0,"l":0,"xl":0}
+            product.user=user
+            if request.data["hasSizes"]==True or request.data["hasSizes"]=="True":
+                product.single_size=False
+                product.save()
+                Inventory.objects.create( user=user, product=product,stock={"XS":0,"S":0,"M":0,"L":0,"XL":0}
                 )
             else:
-                Inventory.objects.create( user=user, product=product,stock=0)
-            return Response({'message': 'Producto creado exitosamente'})
+                product.single_size=True
+                product.save()
+                Inventory.objects.create( user=user, product=product,stock={"Unico tamaño":0})
+            
+            return Response({'status': 200})#producto creado exitosamente
         else:
             return Response({'ERROR':form.errors,"status":"error"},status=HTTP_400_BAD_REQUEST)
     except Exception as e:
@@ -189,11 +193,10 @@ def update_product(request, product_id):
         Response: Retorna mensaje o error al momento de actualizar el producto el producto
     '''
     try:
-        #user="VendedorEjemplo1@gmail.com" #ELIMINAR CUANDO YA NO USE POSTMAN
         user=get_user(request.user)
-        exists,serializer=product_exists(product_id,email=user)
+        exists,serializer=product_exists(product_id,email=request.user)
         if exists:
-            product = Product.objects.get(_id=product_id)
+            product = Product.objects.get(id=product_id)
             form = AddProductForm(request.data, instance=product)
             if form.is_valid():
                 form.save()
@@ -220,11 +223,12 @@ def delete_product(request,product_id):
         Response: Retorna mensaje o error al momento de eliminar el producto
     '''
     try:
-        #user="VendedorEjemplo1@gmail.com" #ELIMINAR CUANDO YA NO USE POSTMAN
         user=get_user(request.user)
-        exists,serializer=product_exists(product_id,email=user)
+        products= Product.objects.filter(user=user)
+        serializer=ProductsSerializer(products,many=True)
+        exists,serializer=product_exists(product_id,email=request.user)
         if exists:
-            product = Product.objects.get(_id=product_id)
+            product = Product.objects.get(id=product_id)
             product.delete()
             return Response({'message': 'Producto eliminado exitosamente'})
         else:

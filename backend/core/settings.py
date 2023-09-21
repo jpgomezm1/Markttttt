@@ -72,7 +72,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware', #SI SE QUIERE PROBAR POSTMAN SE DEBE COMENTAR
+    #'django.middleware.csrf.CsrfViewMiddleware', #SI SE QUIERE PROBAR POSTMAN SE DEBE COMENTAR
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

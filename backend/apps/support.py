@@ -75,7 +75,12 @@ def get_user(email:str):
     #user=request.user
     try:
         user=User.objects.get(email=email)
-        print(user)
+        if user.role=='SELLER':
+            print('ES SELLER')
+            user=Seller.objects.get(email=email)
+        elif user.role=='CLIENT':
+            print('ES CLIENTE')
+            user=Client.objects.get(email=email)
         return user
     except Exception as e:
         return get_error(e)

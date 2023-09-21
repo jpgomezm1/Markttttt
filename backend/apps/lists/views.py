@@ -123,7 +123,7 @@ def get_wishlist(request,wishlist_id):
     try:
         user=get_user(request.user)
         wishlists=WishList.objects.filter(user=user)
-        wishlist=wishlists.filter(_id=wishlist_id)
+        wishlist=wishlists.filter(id=wishlist_id)
         serializer=WishListSeri(wishlist,many=True)
         return Response(serializer.data)
     except Exception as e:
@@ -172,7 +172,7 @@ def update_wishlist(request,wishlist_id):
         user=get_user(request.user)
         print('LLEGA HASTA ACA')
         wishlists=WishList.objects.filter(user=user)
-        wishlist=wishlists.get(_id=wishlist_id)
+        wishlist=wishlists.get(id=wishlist_id)
         form=CreateWishList(request.data, instance=wishlist)
         if form.is_valid():
             form.save()
@@ -199,7 +199,7 @@ def delete_wishlist(request,wishlist_id):
     try:
         user=get_user(request.user)
         wishlists=WishList.objects.filter(user=user)
-        wishlist=wishlists.get(_id=wishlist_id)
+        wishlist=wishlists.get(id=wishlist_id)
         wishlist.delete()
         return Response({'message': 'Producto eliminado exitosamente'})
     except Exception as e:
@@ -222,14 +222,14 @@ def get_wishlist_products(request,wishlist_id):
     try: 
         user=get_user(request.user)
         wishlists=WishList.objects.filter(user=user)
-        wishlist=wishlists.filter(_id=wishlist_id).first()
+        wishlist=wishlists.filter(id=wishlist_id).first()
         #Filtrar los datos para obtener una wishlist
         if wishlist:
             wl_products = wishlist.products.all()
-            product_id = [product._id for product in wl_products] #se obtiene los id de cada producto de la wishlist
+            product_id = [product.id for product in wl_products] #se obtiene los id de cada producto de la wishlist
             products=[]
             for i in product_id: #ciclo para poder obtener la info del producto desde su id
-                products=products+list(Product.objects.filter(_id=i)) #se junta en una lista
+                products=products+list(Product.objects.filter(id=i)) #se junta en una lista
             serializer=ProductSerializerShow(products,many=True)#se serializa esa lista 
         return Response(serializer.data)
     except Exception as e:

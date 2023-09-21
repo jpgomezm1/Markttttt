@@ -48,7 +48,7 @@ def add_order_items(request):
                 address=address,
                 )
             for i in order_items:
-                product=Product.objects.get(_id=i['product'])
+                product=Product.objects.get(id=i['product'])
                 if product.sizes=='No':
                     item= OrderItem.objects.create(
                         product=product,
@@ -70,7 +70,7 @@ def add_order_items(request):
                         price=i['price'],
                     )
                     product_inventory=Inventory.objects.get(product=product)
-                    product_inventory.size_stock[i['size']]-=i['qty']
+                    product_inventory.stock[i['size']]-=i['qty']
                 product_inventory.save()
         serializer=OrderSerializer(order,many=False)
         return Response(serializer.data)
@@ -83,7 +83,7 @@ def get_order(request,order_id):
     try:
         #user=get_user(email="ClienteEjemplo1@gmail.com")#ELIMINAR CUANDO YA NO USE POSTMAN
         user=get_user(request.user)
-        order=Order.objects.filter(user=user).get(_id=order_id)
+        order=Order.objects.filter(user=user).get(id=order_id)
         serializer=OrderSerializer(order,many=False)
         return Response(serializer.data)
     except Exception as e:
@@ -92,7 +92,7 @@ def get_order(request,order_id):
 @api_view(['PUT'])
 def paid_order(request,order_id):
     try:
-        order=Order.objects.get(_id=order_id)
+        order=Order.objects.get(id=order_id)
         order.is_paid=True
         order.paid_at=datetime.now()
         order.save()

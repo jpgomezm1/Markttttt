@@ -1,12 +1,8 @@
-from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.conf import settings
 
-from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -22,24 +18,6 @@ from apps.mail.models import MailSubscribers
 #All
 
 #CRUD Account
-@api_view(['POST'])
-def register_account(request):
-    try:
-        form = RegistrationForm(request.data)  # aquí está el cambio
-        if form.is_valid():
-            email=request.data["email"]  # y aquí
-            MailSubscribers.objects.create(email=email)
-            user = form.save(commit=False)
-            user.save()
-            return Response({'message': 'Cuenta creada exitosamente'})
-        else:
-            errors = form.errors
-            error_message = {}
-            for field, error_list in errors.items():
-                error_message[field] = error_list[0]
-            return Response({'ERROR Message': error_message,'status':'error'},status=HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        return get_error(e)
 
 @permission_classes([IsAuthenticated])
 @login_required
@@ -135,7 +113,34 @@ def delete_account(request):
 
 
 #Client
+@api_view(['POST'])
+def register_client_account(request):
+    """metodo para crear una cuenta de cliente
 
+    Args:
+        request (): django
+
+    Returns:
+        Json: mensaje de respuesta
+    """
+    try:
+        form = ClientRegistrationForm(request.data)  # aquí está el cambio
+        if form.is_valid():
+            email=request.data["email"]  # y aquí
+            MailSubscribers.objects.create(email=email)
+            user = form.save(commit=False)
+            user.role = User.Role.CLIENT
+            user.save()
+            return Response({'message': 'Cuenta creada exitosamente'})
+        else:
+            errors = form.errors
+            error_message = {}
+            for field, error_list in errors.items():
+                error_message[field] = error_list[0]
+            return Response({'ERROR Message': error_message,'status':'error'},status=HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return get_error(e)
+    
 @api_view(['POST'])
 def login_user_client(request):
     '''Metodo para hacer el Login
@@ -156,7 +161,7 @@ def login_user_client(request):
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
                 refresh_token = str(refresh)
-                user_data = User.objects.filter(email=email)
+                user_data = Client.objects.filter(email=email)
                 serializer = UserClientSerializer(user_data, many=True)
                 return Response({
                     "message": "Inicio de sesión exitoso",
@@ -173,6 +178,24 @@ def login_user_client(request):
 
 
 #Seller
+@api_view(['POST'])
+def register_seller_account(request):
+    try:
+        form = SellerRegistrationForm(request.data)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.role = User.Role.SELLER
+            user.save()
+            return Response({'message': 'Cuenta creada exitosamente'})
+        else:
+            errors = form.errors
+            error_message = {}
+            for field, error_list in errors.items():
+                error_message[field] = error_list[0]
+            return Response({'ERROR Message': error_message,'status':'error'},status=HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return get_error(e)
+    
 
 @api_view(['POST'])
 def login_user_seller(request):
@@ -186,6 +209,7 @@ def login_user_seller(request):
     '''
     try:
         email=request.data['email']
+        print(f'ESTE ES EL EMAILLL {email}')
         password=request.data['password']
         user=authenticate(request,username=email,password=password)
         if user is not None:
@@ -194,7 +218,7 @@ def login_user_seller(request):
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
                 refresh_token = str(refresh)
-                user=User.objects.filter(email=email)
+                user=Seller.objects.filter(email=email)
                 serializer=UserSellerSerializer(user,many=True)
                 return Response({
                                 "message":"Inicio de sesión exitoso",
